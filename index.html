@@ -132,6 +132,10 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
    });
  }
  async function compressImage(item,maxBytes,strategy){
+   if(item.file.size<=maxBytes){
+     item.blob=item.file;item.blobUrl=URL.createObjectURL(item.file);item.outputName=item.file.name;
+     item.dimensions='Originale mantenuto';item.quality=null;item.status='Già entro il limite';return;
+   }
    const img=await loadImage(item.file);
    const sourceType=(item.file.type||'').toLowerCase();
    let type=sourceType;
@@ -141,7 +145,7 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
      else throw new Error('Formato non supportato dal browser');
    }
    const extension=type==='image/jpeg'?'jpg':type==='image/webp'?'webp':'png';
-   let width=img.naturalWidth,height=img.naturalHeight,quality=0.9,blob=null,usedQuality=null;
+   let width=img.naturalWidth,height=img.naturalHeight,blob=null,usedQuality=null;
    if(strategy==='balanced'&&(type==='image/jpeg'||type==='image/webp')){
      for(let q=90;q>=10;q-=5){
        const candidate=await encode(img,width,height,type,q/100);
@@ -152,15 +156,15 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
      let scale=1;
      for(let attempt=0;attempt<35;attempt++){
        const w=Math.max(1,Math.round(img.naturalWidth*scale)),h=Math.max(1,Math.round(img.naturalHeight*scale));
-       const q=(type==='image/jpeg'||type==='image/webp')?(strategy==='dimensions'?0.85:0.85):undefined;
+       const q=(type==='image/jpeg'||type==='image/webp')?0.85:undefined;
        const candidate=await encode(img,w,h,type,q);
        if(candidate.size<=maxBytes){blob=candidate;width=w;height=h;usedQuality=q===undefined?null:Math.round(q*100);break}
        scale*=0.85;
      }
    }
    if(!blob)throw new Error('Non è stato possibile raggiungere il limite impostato');
-   const base=item.file.name.replace(/\.[^.]+$/,'');
-   item.blob=blob;item.outputType=type;item.outputName=base+(extension==='png'&&/\.bmp$/i.test(item.file.name)?'.png':'.'+extension);
+   const base=item.file.name.replace(/\\.[^.]+$/,'');
+   item.blob=blob;item.outputType=type;item.outputName=base+(type==='image/png'&&/\\.bmp$/i.test(item.file.name)?'.png':'.'+extension);
    item.blobUrl=URL.createObjectURL(blob);item.quality=usedQuality;item.dimensions=width+' × '+height+' px';
    item.status=blob.size<=maxBytes?'Completata':'Limite superato';
  }
@@ -186,7 +190,7 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
      const zip=new JSZip(),used=new Set();
      files.forEach(x=>{
        let name=x.outputName,n=1;
-       while(used.has(name.toLowerCase())){const dot=x.outputName.lastIndexOf('.');name=x.outputName.slice(0,dot)+'_'+n+++x.outputName.slice(dot)}
+       while(used.has(name.toLowerCase())){const dot=x.outputName.lastIndexOf('.');name=x.outputName.slice(0,dot)+'_'+(n++)+x.outputName.slice(dot)}
        used.add(name.toLowerCase());zip.file(name,x.blob);
      });
      const blob=await zip.generateAsync({type:'blob'}),url=URL.createObjectURL(blob),a=document.createElement('a');
