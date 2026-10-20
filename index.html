@@ -37,8 +37,13 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
 .btn.alt{background:transparent;color:var(--fg)}
 .controls{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;margin:24px 0}
 .field label{display:block;font-size:15px;font-weight:300;color:var(--muted);margin-bottom:6px}
-.field input[type=number],.field select{width:100%;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--fg);font:inherit;padding:7px 0;outline-offset:3px}
-.field select option{background:var(--bg);color:var(--fg)}
+.field input[type=number]{width:100%;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--fg);font:inherit;padding:7px 0;outline-offset:3px}
+.strategy-field{grid-column:1/-1}
+.strategy-choice{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+.strategy-option{padding:10px 8px;border:1px solid var(--line);border-bottom:0;background:transparent;color:var(--fg);font:inherit;font-size:15px;line-height:1.4;cursor:pointer;transition:background .2s,color .2s}
+.strategy-option+.strategy-option{border-left:0}
+.strategy-option.selected{background:var(--fg);color:var(--bg)}
+.strategy-option:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
 .summary{font-size:14px;color:var(--muted);margin:12px 0}
 .progress{height:2px;background:var(--line);margin-top:14px}
@@ -66,7 +71,7 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
   </section>
   <section class="controls" aria-label="Impostazioni">
     <div class="field"><label for="maxkb">Peso massimo per immagine (KB)</label><input id="maxkb" type="number" min="50" max="10000" step="50" value="600"></div>
-    <div class="field"><label for="strategy">Metodo</label><select id="strategy"><option value="balanced">Qualità prima, poi dimensioni</option><option value="dimensions">Riduci prima le dimensioni</option></select></div>
+    <div class="field strategy-field"><label>Metodo</label><div class="strategy-choice" role="group" aria-label="Metodo di ridimensionamento"><button class="strategy-option selected" id="balanced" type="button" aria-pressed="true">Qualità prima, poi dimensioni</button><button class="strategy-option" id="dimensions" type="button" aria-pressed="false">Riduci prima le dimensioni</button></div></div>
   </section>
   <div class="actions"><button class="btn" id="process" disabled type="button">Ridimensiona immagini</button><button class="btn alt" id="clear" disabled type="button">Azzera</button></div>
   <div id="summary" class="summary" aria-live="polite">Nessuna immagine selezionata.</div>
@@ -78,6 +83,18 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
 (() => {
  const $=id=>document.getElementById(id), state=[];
  const drop=$('drop'), picker=$('picker'), folderPicker=$('folderPicker');
+ let strategyValue='balanced';
+ const strategyButtons=[$('balanced'),$('dimensions')];
+ function updateStrategy(value=strategyValue){
+   strategyValue=value;
+   strategyButtons.forEach((button,index)=>{
+     const selected=(index===0&&value==='balanced')||(index===1&&value==='dimensions');
+     button.classList.toggle('selected',selected);
+     button.setAttribute('aria-pressed',String(selected));
+   });
+ }
+ strategyButtons[0].addEventListener('click',()=>updateStrategy('balanced'));
+ strategyButtons[1].addEventListener('click',()=>updateStrategy('dimensions'));
  const root=document.documentElement, system=matchMedia('(prefers-color-scheme: dark)');
  function isDarkMode(){try{const manual=sessionStorage.getItem('theme');if(manual==='dark')return true;if(manual==='light')return false}catch{}return system.matches}
  function applyTheme(theme){root.classList.remove('dark','light');if(theme)root.classList.add(theme);$('theme').setAttribute('aria-checked',String(isDarkMode()))}
@@ -169,7 +186,7 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
    item.status=blob.size<=maxBytes?'Completata':'Limite superato';
  }
  async function processAll(){
-   const kb=Number($('maxkb').value),strategy=$('strategy').value;
+   const kb=Number($('maxkb').value),strategy=strategyValue;
    if(!Number.isFinite(kb)||kb<50||kb>10000){$('summary').textContent='Inserisci un limite tra 50 e 10.000 KB.';return}
    $('process').disabled=true;$('zip').disabled=true;
    state.forEach(x=>{if(x.blobUrl)URL.revokeObjectURL(x.blobUrl);x.blobUrl=null;x.blob=null;x.status='In elaborazione';x.outputName=''});
