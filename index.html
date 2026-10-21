@@ -18,8 +18,8 @@ main{width:min(100%,600px);margin:0 auto;padding:0 0 30px}
 header{max-width:600px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
 header a{color:var(--fg);text-decoration:none;font-family:"Jost",sans-serif;font-size:30px;font-weight:600;letter-spacing:-.03em;transition:opacity .2s}
 header a:hover{opacity:.7}
-.theme{width:44px;height:28px;min-width:44px;padding:5px;border:0;border-radius:99px;background:var(--fg);cursor:pointer;display:flex;align-items:center;flex:0 0 44px;touch-action:manipulation}
-.theme::before{content:"";width:18px;height:18px;flex:0 0 18px;border-radius:50%;background:var(--bg);transition:transform .22s ease}
+.theme{width:40px;height:21px;padding:4px;border:0;border-radius:99px;background:var(--fg);cursor:pointer;display:flex;align-items:center;flex:0 0 40px}
+.theme::before{content:"";width:15px;height:15px;flex:0 0 15px;border-radius:50%;background:var(--bg);transition:transform .22s ease}
 @media(prefers-color-scheme:dark){:root:not(.light) .theme::before{transform:translateX(16px) scale(1.03)}}
 :root.dark .theme::before{transform:translateX(16px) scale(1.03)}
 :root.light .theme::before{transform:translateX(0) scale(1)}
