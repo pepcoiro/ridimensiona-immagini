@@ -8,21 +8,13 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap");
 html{scrollbar-gutter:stable}
-:root{color-scheme:light;--bg:#f2f1ee;--fg:#292929;--muted:#777777;--line:rgba(41,41,41,.25);--hover:rgba(41,41,41,.05)}
-@media(prefers-color-scheme:dark){:root:not(.light){color-scheme:dark;--bg:#161616;--fg:#e5e5e2;--muted:#a0a09d;--line:rgba(229,229,226,.28);--hover:rgba(229,229,226,.07)}}
-:root.dark{color-scheme:dark;--bg:#161616;--fg:#e5e5e2;--muted:#a0a09d;--line:rgba(229,229,226,.28);--hover:rgba(229,229,226,.07)}
-:root.light{color-scheme:light;--bg:#f2f1ee;--fg:#292929;--muted:#777777;--line:rgba(41,41,41,.25);--hover:rgba(41,41,41,.05)}
+:root{color-scheme:dark;--bg:#161616;--fg:#e5e5e2;--muted:#a0a09d;--line:rgba(229,229,226,.28);--hover:rgba(229,229,226,.07)}
 *{box-sizing:border-box}
 body{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;margin:0;padding:36px 24px;background:var(--bg);color:var(--fg);transition:background .2s,color .2s}
 main{width:min(100%,600px);margin:0 auto;padding:0 0 30px}
 header{max-width:600px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
 header a{color:var(--fg);text-decoration:none;font-family:"Jost",sans-serif;font-size:30px;font-weight:600;letter-spacing:-.03em;transition:opacity .2s}
 header a:hover{opacity:.7}
-.theme{width:40px;height:21px;padding:4px;border:0;border-radius:99px;background:var(--fg);cursor:pointer;display:flex;align-items:center;flex:0 0 40px}
-.theme::before{content:"";width:15px;height:15px;flex:0 0 15px;border-radius:50%;background:var(--bg);transition:transform .22s ease}
-@media(prefers-color-scheme:dark){:root:not(.light) .theme::before{transform:translateX(16px) scale(1.03)}}
-:root.dark .theme::before{transform:translateX(16px) scale(1.03)}
-:root.light .theme::before{transform:translateX(0) scale(1)}
 h1,h2,h3{font-family:"Jost",sans-serif;font-weight:600}
 h1{margin:0 0 10px;font-size:30px;line-height:1.2;letter-spacing:-1.2px}
 h2{margin:0 0 10px;font-size:24px}
@@ -65,7 +57,7 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
 </head>
 <body>
 <main>
-  <header><a href="#">Ridimensiona immagini</a><button class="theme" id="theme" type="button" role="switch" aria-label="Cambia tema" aria-checked="false"></button></header>
+  <header><a href="#">Ridimensiona immagini</a></header>
   <section class="tool">
     <div class="drop" id="drop"><p id="droptext">Trascina qui le immagini oppure</p><div class="actions" style="justify-content:center;margin:0"><button class="btn alt" id="chooseFiles" type="button">Scegli immagini</button><button class="btn alt" id="chooseFolder" type="button">Scegli cartella</button></div><input id="picker" type="file" accept="image/jpeg,image/png,image/webp,image/bmp" multiple hidden><input id="folderPicker" type="file" accept="image/jpeg,image/png,image/webp,image/bmp" webkitdirectory multiple hidden></div>
   </section>
@@ -95,13 +87,6 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
  }
  strategyButtons[0].addEventListener('click',()=>updateStrategy('balanced'));
  strategyButtons[1].addEventListener('click',()=>updateStrategy('dimensions'));
- const root=document.documentElement, system=matchMedia('(prefers-color-scheme: dark)');
- function isDarkMode(){try{const manual=sessionStorage.getItem('theme');if(manual==='dark')return true;if(manual==='light')return false}catch{}return system.matches}
- function applyTheme(theme){root.classList.remove('dark','light');if(theme)root.classList.add(theme);$('theme').setAttribute('aria-checked',String(isDarkMode()))}
- let initialTheme=null;try{const saved=sessionStorage.getItem('theme');if(saved==='dark'||saved==='light')initialTheme=saved}catch{}
- applyTheme(initialTheme);
- system.addEventListener('change',()=>{let saved=null;try{saved=sessionStorage.getItem('theme')}catch{}if(saved===null)applyTheme(null)});
- $('theme').addEventListener('click',()=>{const next=isDarkMode()?'light':'dark';try{sessionStorage.setItem('theme',next)}catch{}applyTheme(next)});
  $('chooseFiles').addEventListener('click',()=>picker.click());
  $('chooseFolder').addEventListener('click',()=>folderPicker.click());
  picker.addEventListener('change',e=>{addFiles([...e.target.files]);picker.value=''});
