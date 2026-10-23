@@ -5,8 +5,8 @@ html{scrollbar-gutter:stable}
 body{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;margin:0;padding:36px 24px;background:var(--bg);color:var(--fg);transition:background .2s,color .2s}
 main{width:min(100%,600px);margin:0 auto;padding:0 0 30px}
 header{max-width:600px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-header a{color:var(--fg);text-decoration:none;font-family:"Jost",sans-serif;font-size:30px;font-weight:600;letter-spacing:-.03em;transition:opacity .2s}
-header a:hover{opacity:.7}
+header .page-title{color:var(--fg);text-decoration:none;font-family:"Jost",sans-serif;font-size:30px;font-weight:600;letter-spacing:-.03em;transition:opacity .2s}
+header .page-title:hover{opacity:.7}
 h1,h2,h3{font-family:"Jost",sans-serif;font-weight:600}
 h1{margin:0 0 10px;font-size:30px;line-height:1.2;letter-spacing:-1.2px}
 h2{margin:0 0 10px;font-size:24px}
@@ -44,7 +44,7 @@ p{font-family:"Jost",sans-serif;font-size:18px;font-weight:400;line-height:1.8;m
 .ziprow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:15px}
 .hidden{display:none!important}
 .foot{font-size:14px;font-weight:300;color:var(--muted);margin-top:30px}
-@media(max-width:600px){body{padding:24px 18px}header a{font-size:27px}.tool{margin-top:30px}.controls{gap:16px}.drop{padding:23px 12px}.file{grid-template-columns:minmax(0,1fr) auto;gap:8px}}
+@media(max-width:600px){body{padding:24px 18px}header .page-title{font-size:27px}.tool{margin-top:30px}.controls{gap:16px}.drop{padding:23px 12px}.file{grid-template-columns:minmax(0,1fr) auto;gap:8px}}
 
 
 .site-footer{width:min(100%,600px);margin:24px auto 0;padding-top:12px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
